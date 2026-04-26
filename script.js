@@ -1,3 +1,17 @@
+// AUTH
+function checkPassword() {
+    const p = "7777777";
+    if (document.getElementById("passwordInput").value === p) {
+        document.getElementById("authScreen").style.display = "none";
+    } else { alert("Wrong password"); }
+}
+// Add Enter key support
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('authScreen').style.display !== 'none') {
+        checkPassword();
+    }
+});
+
 // STATE
 let leads = JSON.parse(localStorage.getItem('kulgifts_leads')) || [];
 let products = [{
