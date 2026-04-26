@@ -33,7 +33,7 @@ body { background: var(--bg-pane); color: var(--text); line-height: 1.5; }
 
 /* SIDEBAR & CHECKBOX FIXES */
 .input-pane { background: var(--bg); border-right: 1px solid var(--border); padding: 32px; height: 100vh; position: sticky; top: 0; overflow-y: auto; }
-.logo { height: 16px; margin-bottom: 10px; }
+.logo { height: 25px; margin-bottom: 15px; }
 h1 { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
 .form-section { margin-bottom: 24px; padding-top: 12px; }
 .section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
