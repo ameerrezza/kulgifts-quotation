@@ -227,5 +227,4 @@ async function generatePDF() {
     // 5. Restore original title
     document.title = originalTitle;
 }
-function sendEmail() { window.location.href = `mailto:${document.getElementById('email').value}`; }
 function resetForm() { if (confirm('Reset tool?')) location.reload(); }
