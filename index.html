@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUL Gifts | Quotation Tool</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- LEFT: INPUTS -->
+        <aside class="input-pane">
+            <header>
+                <img src="https://kulgifts.com/wp-content/uploads/2023/06/KUL-Gifts-Logo-Copy.png" alt="KUL Gifts"
+                    class="logo">
+                <h1>Quotation Tool</h1>
+            </header>
+
+            <form id="quote-form">
+                <!-- Section: From -->
+                <div class="form-section">
+                    <h4 class="section-title">Sender Details (FROM)</h4>
+                    <div class="input-group">
+                        <label>Sender Name</label>
+                        <input type="text" id="fromName" value="KUL Gifts Team" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <!-- Section: To -->
+                <div class="form-section">
+                    <h4 class="section-title">Client Details (TO)</h4>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Client Name</label>
+                            <input type="text" id="clientName" placeholder="John Doe" oninput="updatePreview()">
+                        </div>
+                        <div class="input-group">
+                            <label>Company</label>
+                            <input type="text" id="companyName" placeholder="Organization" oninput="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Phone</label>
+                            <input type="text" id="phoneNumber" placeholder="601x..." oninput="updatePreview()">
+                        </div>
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="text" id="email" placeholder="client@example.com" oninput="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Client Location</label>
+                        <input type="text" id="clientLocation" placeholder="e.g. Kuala Lumpur, Malaysia"
+                            oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <!-- Section: Products -->
+                <div class="form-section">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 class="section-title" style="margin-bottom: 0;">Products</h4>
+                        <button type="button" class="btn-text" onclick="addProductBlock()">+ Add Product</button>
+                    </div>
+                    <div id="product-blocks-container"></div>
+
+                    <div class="input-group" style="margin-top: 24px;">
+                        <label>Shipping Price (RM)</label>
+                        <input type="text" id="shippingPrice" placeholder="e.g. 100" oninput="updatePreview()">
+                    </div>
+                </div>
+            </form>
+
+            <div class="pane-footer">
+                <button class="btn btn-danger btn-full" onclick="resetForm()">
+                    <i data-lucide="trash-2"></i> Reset Tool
+                </button>
+            </div>
+        </aside>
+
+        <!-- RIGHT: PREVIEW -->
+        <main class="preview-pane">
+            <div id="quotation-doc" class="document-card">
+                <!-- Page 1 Header (LEFT/RIGHT ALIGNED) -->
+                <!-- TOP SECTION: HEADER, INFO, PRODUCTS, TOTALS -->
+                <div class="doc-content-wrapper">
+                    <header class="doc-header">
+                        <div class="brand">
+                            <img src="iconlogo.png" alt="KUL Gifts" style="height: 30px;">
+                        </div>
+                        <div class="doc-meta">
+                            <h2>QUOTATION</h2>
+                            <div class="meta-row"><span>Quote ID:</span> <strong id="p-quote-id">KG-0001</strong></div>
+                            <div class="meta-row"><span>Date Issued:</span> <span id="p-date-issued">-</span></div>
+                            <div class="meta-row"><span>Valid Until:</span> <span id="p-valid-until">-</span></div>
+                        </div>
+                    </header>
+
+                    <div class="address-grid">
+                        <div class="address-block">
+                            <label>FROM</label>
+                            <p><strong id="p-from-name">KUL Gifts Team</strong></p>
+                            <p>60182630390</p>
+                            <p>kulgifts2u@gmail.com</p>
+                            <p>Cyberjaya HQ, Malaysia</p>
+                        </div>
+                        <div class="address-block">
+                            <label>TO</label>
+                            <p><strong id="p-client-name">Client Name</strong></p>
+                            <p id="p-company-name">Company Name</p>
+                            <p id="p-phone">Phone Number</p>
+                            <p id="p-email">Email Address</p>
+                            <p id="p-client-location">Client Location</p>
+                        </div>
+                    </div>
+
+                    <div class="order-table">
+                        <div class="table-header">
+                            <div>PRODUCT DESCRIPTION</div>
+                            <div class="text-center">QTY</div>
+                            <div class="text-right">UNIT PRICE</div>
+                            <div class="text-right">TOTAL</div>
+                        </div>
+                        <div id="p-items-container"></div>
+                    </div>
+
+                <!-- PRICING SUMMARY (RIGHT ALIGNED) -->
+                <div class="pricing-summary">
+                    <div class="summary-top-divider"></div>
+
+                    <!-- Payment Breakdown (Decision Point) -->
+                    <div id="row-deposit" class="summary-row milestone"><span>Deposit (60%)</span> <span id="p-deposit">RM 0.00</span></div>
+                    <div id="row-balance" class="summary-row milestone last-milestone"><span>Balance (40%)</span> <span id="p-balance">RM 0.00</span></div>
+                    
+                    <!-- Cost Breakdown (Secondary) -->
+                    <div class="summary-row secondary"><span>Subtotal</span> <span id="p-subtotal">RM 0.00</span></div>
+                    <div class="summary-row secondary"><span>Shipping</span> <span id="p-shipping">RM 0.00</span></div>
+
+                    <div class="summary-divider"></div>
+                    <div class="summary-row total">
+                        <strong>TOTAL AMOUNT</strong>
+                        <strong id="p-total-amount">RM 0.00</strong>
+                    </div>
+                </div>
+                </div>
+
+                <!-- BOTTOM SECTION (KEEPS PAYMENT & NOTES TOGETHER) -->
+                <div class="bottom-section">
+                    <div class="doc-footer">
+                        <div class="payment-info">
+                            <label>PAYMENT INFORMATION</label>
+                            <p><strong>Bank:</strong> Maybank</p>
+                            <p><strong>Account Name:</strong> KUL GIFT WORLDWIDE</p>
+                            <p><strong>Account Number:</strong> 518608055493</p>
+                        </div>
+                        <div class="notes-box">
+                            <label>NOTES:</label>
+                            <ul>
+                                <li>Quotation is valid for 7 days</li>
+                                <li>Production starts after confirmation</li>
+                                <li>Delivery timeline shared upon order</li>
+                                <li>Lalamove can be arranged by request</li>
+                                <li id="note-deposit">60% deposit required to confirm order, remaining 40% upon completion</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-actions no-print">
+                <button class="btn btn-primary btn-full btn-large" onclick="sendWhatsApp()"><i
+                        data-lucide="message-circle"></i> Send via WhatsApp</button>
+                <div class="action-row">
+                    <button class="btn btn-secondary btn-full" onclick="generatePDF()"><i data-lucide="file-text"></i>
+                        Generate PDF</button>
+                    <button class="btn btn-secondary btn-full" onclick="sendEmail()"><i data-lucide="mail"></i> Send
+                        Email</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="toast"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
