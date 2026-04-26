@@ -176,16 +176,15 @@
                 </div>
             </div>
 
-            <div class="preview-actions no-print">
-                <button class="btn btn-primary btn-full btn-large" onclick="sendWhatsApp()"><i
-                        data-lucide="message-circle"></i> Send via WhatsApp</button>
-                <div class="action-row">
-                    <button class="btn btn-secondary btn-full" onclick="generatePDF()"><i data-lucide="file-text"></i>
-                        Generate PDF</button>
-                    <button class="btn btn-secondary btn-full" onclick="sendEmail()"><i data-lucide="mail"></i> Send
-                        Email</button>
+                <div class="action-section">
+                    <button type="button" class="btn btn-whatsapp btn-large" onclick="sendWhatsApp()">
+                        <i data-lucide="message-circle"></i> Send via WhatsApp
+                    </button>
+                    
+                    <button type="button" class="btn btn-pdf btn-large" onclick="generatePDF()">
+                        <i data-lucide="file-text"></i> Generate PDF
+                    </button>
                 </div>
-            </div>
         </main>
     </div>
     <div id="toast"></div>
