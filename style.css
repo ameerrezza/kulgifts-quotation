@@ -28,6 +28,57 @@ body {
     min-height: 100vh;
 }
 
+/* AUTH SCREEN */
+#authScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.auth-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+.auth-box img {
+    height: 48px;
+    width: auto;
+    margin-bottom: 24px;
+}
+
+.auth-box input {
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    text-align: center;
+}
+
+.auth-box button {
+    padding: 12px 32px;
+    width: 100%;
+    background: #191919;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
 body {
     background: var(--bg-pane);
     color: var(--text);
