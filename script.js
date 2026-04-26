@@ -1,8 +1,8 @@
 // STATE
 let leads = JSON.parse(localStorage.getItem('kulgifts_leads')) || [];
-let products = [{ 
+let products = [{
     id: Date.now(), desc: '', details: '', qty: '', price: '',
-    addPkg: false, addLogo: false, addCard: false 
+    addPkg: false, addLogo: false, addCard: false
 }];
 
 // INIT
@@ -79,7 +79,7 @@ function updatePreview() {
     const senderLoc = "G4, The Street Mall, Lingkaran Cyber Point Timur, Cyberjaya, 63000 Cyberjaya, Selangor";
     const senderPhone = "60182630390";
     const senderEmail = "kulgifts2u@gmail.com";
-    
+
     const fromP = document.querySelector('.address-block:first-child');
     if (fromP) {
         fromP.innerHTML = `
@@ -108,13 +108,13 @@ function updatePreview() {
         totalQty += qty;
         const price = parseFloat(p.price) || 0;
         const baseTotal = qty * price;
-        
+
         let productAddonsTotal = 0;
         const activeAddonNames = [];
         if (p.addPkg) { productAddonsTotal += (5 * qty); activeAddonNames.push('Packaging (+RM5)'); }
         if (p.addLogo) { productAddonsTotal += (3 * qty); activeAddonNames.push('Logo Printing (+RM3)'); }
         if (p.addCard) { productAddonsTotal += (2 * qty); activeAddonNames.push('Custom Card (+RM2)'); }
-        
+
         const lineTotal = baseTotal + productAddonsTotal;
         subtotal += lineTotal;
 
@@ -138,7 +138,7 @@ function updatePreview() {
 
     const ship = parseFloat(document.getElementById('shippingPrice').value) || 0;
     const finalTotal = subtotal + ship;
-    
+
     // Conditional Deposit Logic
     const isBulk = totalQty >= 100;
     const deposit = finalTotal * 0.6;
@@ -147,7 +147,7 @@ function updatePreview() {
     document.getElementById('p-subtotal').textContent = formatRM(subtotal);
     document.getElementById('p-shipping').textContent = formatRM(ship);
     document.getElementById('p-total-amount').textContent = formatRM(finalTotal);
-    
+
     // Toggle UI for Deposit
     const rowDeposit = document.getElementById('row-deposit');
     const rowBalance = document.getElementById('row-balance');
@@ -177,6 +177,63 @@ function updateDates() {
     document.getElementById('p-quote-id').textContent = id;
 }
 
+async function triggerWebhook() {
+    const quoteId = document.getElementById('p-quote-id').textContent;
+    const clientName = document.getElementById('clientName').value || 'Client';
+    const company = document.getElementById('companyName').value || '';
+    const phone = document.getElementById('phoneNumber').value || '';
+    const email = document.getElementById('email').value || '';
+    const location = document.getElementById('clientLocation').value || '';
+
+    // Financials
+    const totalAmountStr = document.getElementById('p-total-amount').textContent;
+    const totalAmount = parseFloat(totalAmountStr.replace(/[^\d.]/g, '')) || 0;
+
+    // Product Summary & Addons
+    let totalQuantity = 0;
+    const descriptions = [];
+    const addonsSet = new Set();
+
+    products.forEach(p => {
+        const qty = parseInt(p.qty) || 0;
+        totalQuantity += qty;
+        if (p.desc) descriptions.push(`${p.desc} (x${qty})`);
+        if (p.addPkg) addonsSet.add('Packaging');
+        if (p.addLogo) addonsSet.add('Logo Printing');
+        if (p.addCard) addonsSet.add('Custom Card');
+    });
+
+    const productSummary = descriptions.join(', ');
+    const addOns = Array.from(addonsSet).join(', ');
+
+    try {
+        fetch("https://hook.eu2.make.com/07lnkos0vfifxr0a82c8zlnv48gyq6td", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: clientName,
+                company: company,
+                phone: phone,
+                email: email,
+                location: location,
+                product: productSummary,
+                quantity: totalQuantity,
+                addons: addOns,
+                total: totalAmount,
+                quoteId: quoteId,
+                status: "NEW",
+                priority: totalAmount >= 5000 ? "HIGH" : "MEDIUM",
+                followUp: "",
+                lastContacted: "",
+                notes: "",
+                date: new Date().toISOString()
+            })
+        });
+    } catch (e) {
+        console.warn('Webhook send failed', e);
+    }
+}
+
 function sendWhatsApp() {
     const phoneInput = document.getElementById('phoneNumber').value;
     const clientName = document.getElementById('clientName').value || 'Client';
@@ -188,6 +245,9 @@ function sendWhatsApp() {
         return;
     }
 
+    // Trigger Webhook
+    triggerWebhook();
+
     // Clean phone number: remove non-digits, and ensure it's in 60X format if needed
     let cleanPhone = phoneInput.replace(/\D/g, '');
     if (cleanPhone.startsWith('0')) {
@@ -197,34 +257,39 @@ function sendWhatsApp() {
     }
 
     const message = `Hello ${clientName},\nHere is your quotation from KUL Gifts.\n\nQuote ID: ${quoteId}\nTotal Amount: ${totalAmount}\n\nLet me know if you’d like to proceed.`;
-    
+
     const whatsappURL = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, "_blank");
 }
-async function generatePDF() { 
+
+async function generatePDF() {
     // 1. Force final update
     updatePreview();
-    
-    // 2. Prepare Dynamic Filename
+
+    // 2. Trigger Webhook
+    triggerWebhook();
+
+    // 3. Prepare Dynamic Filename
     const originalTitle = document.title;
     const company = document.getElementById('companyName').value;
     const client = document.getElementById('clientName').value;
     const filenameSource = (company || client || 'Client').trim();
-    
+
     // Set dynamic title (Browser uses this as default PDF filename)
     document.title = `KUL Gifts Quotation - ${filenameSource}`;
 
-    // 3. Wait for fonts (Inter) to be ready to prevent fallback rendering
+    // 4. Wait for fonts (Inter) to be ready to prevent fallback rendering
     try {
         await document.fonts.ready;
-    } catch(e) {
+    } catch (e) {
         console.warn('Font loading timed out, proceeding anyway.');
     }
-    
-    // 4. Trigger Print
-    window.print(); 
 
-    // 5. Restore original title
+    // 5. Trigger Print
+    window.print();
+
+    // 6. Restore original title
     document.title = originalTitle;
 }
+
 function resetForm() { if (confirm('Reset tool?')) location.reload(); }
