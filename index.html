@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUL Gifts | Quotation Maker</title>
+    <title>KUL Gifts | Quotation Tool</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,6 +13,14 @@
 </head>
 
 <body>
+    <!-- Internal Access Gate -->
+    <div id="authScreen">
+        <div class="auth-box">
+            <img src="iconlogo.png" alt="KUL Gifts" />
+            <input type="password" id="passwordInput" placeholder="Enter password" />
+            <button onclick="checkPassword()">Access</button>
+        </div>
+    </div>
 
     <div class="wrapper">
         <!-- LEFT: INPUTS -->
@@ -21,7 +29,7 @@
                 <div class="logo">
                     <img src="iconlogo.png" alt="KUL Gifts">
                 </div>
-                <h1>Quotation Tool</h1>
+                <h1>Quotation Maker</h1>
             </header>
 
             <form id="quote-form">
@@ -133,24 +141,29 @@
                         <div id="p-items-container"></div>
                     </div>
 
-                <!-- PRICING SUMMARY (RIGHT ALIGNED) -->
-                <div class="pricing-summary">
-                    <div class="summary-top-divider"></div>
+                    <!-- PRICING SUMMARY (RIGHT ALIGNED) -->
+                    <div class="pricing-summary">
+                        <div class="summary-top-divider"></div>
 
-                    <!-- Payment Breakdown (Decision Point) -->
-                    <div id="row-deposit" class="summary-row milestone"><span>Deposit (60%)</span> <span id="p-deposit">RM 0.00</span></div>
-                    <div id="row-balance" class="summary-row milestone last-milestone"><span>Balance (40%)</span> <span id="p-balance">RM 0.00</span></div>
-                    
-                    <!-- Cost Breakdown (Secondary) -->
-                    <div class="summary-row secondary"><span>Subtotal</span> <span id="p-subtotal">RM 0.00</span></div>
-                    <div class="summary-row secondary"><span>Shipping</span> <span id="p-shipping">RM 0.00</span></div>
+                        <!-- Payment Breakdown (Decision Point) -->
+                        <div id="row-deposit" class="summary-row milestone"><span>Deposit (60%)</span> <span
+                                id="p-deposit">RM 0.00</span></div>
+                        <div id="row-balance" class="summary-row milestone last-milestone"><span>Balance (40%)</span>
+                            <span id="p-balance">RM 0.00</span>
+                        </div>
 
-                    <div class="summary-divider"></div>
-                    <div class="summary-row total">
-                        <strong>TOTAL AMOUNT</strong>
-                        <strong id="p-total-amount">RM 0.00</strong>
+                        <!-- Cost Breakdown (Secondary) -->
+                        <div class="summary-row secondary"><span>Subtotal</span> <span id="p-subtotal">RM 0.00</span>
+                        </div>
+                        <div class="summary-row secondary"><span>Shipping</span> <span id="p-shipping">RM 0.00</span>
+                        </div>
+
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total">
+                            <strong>TOTAL AMOUNT</strong>
+                            <strong id="p-total-amount">RM 0.00</strong>
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <!-- BOTTOM SECTION (KEEPS PAYMENT & NOTES TOGETHER) -->
@@ -169,22 +182,23 @@
                                 <li>Production starts after confirmation</li>
                                 <li>Delivery timeline shared upon order</li>
                                 <li>Lalamove can be arranged by request</li>
-                                <li id="note-deposit">60% deposit required to confirm order, remaining 40% upon completion</li>
+                                <li id="note-deposit">60% deposit required to confirm order, remaining 40% upon
+                                    completion</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
 
-                <div class="action-section">
-                    <button type="button" class="btn btn-whatsapp btn-large" onclick="sendWhatsApp()">
-                        <i data-lucide="message-circle"></i> Send via WhatsApp
-                    </button>
-                    
-                    <button type="button" class="btn btn-pdf btn-large" onclick="generatePDF()">
-                        <i data-lucide="file-text"></i> Generate PDF
-                    </button>
-                </div>
+            <div class="action-section">
+                <button type="button" class="btn btn-whatsapp btn-large" onclick="sendWhatsApp()">
+                    <i data-lucide="message-circle"></i> Send via WhatsApp
+                </button>
+
+                <button type="button" class="btn btn-pdf btn-large" onclick="generatePDF()">
+                    <i data-lucide="file-text"></i> Generate PDF
+                </button>
+            </div>
         </main>
     </div>
     <div id="toast"></div>
