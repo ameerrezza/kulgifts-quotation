@@ -113,22 +113,17 @@ input, textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1
 .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #ffd6d6; margin-top: 10px; }
 
 /* Action Button Layout Refinement */
-.preview-actions { 
+.action-section { 
     width: 100%; 
     max-width: 210mm; 
     display: flex; 
     flex-direction: column; 
-    gap: 12px; /* STRICT: Spacing between rows */
+    gap: 12px; /* STRICT: Spacing between buttons */
     margin-top: 24px; 
     margin-bottom: 80px; 
 }
-
-.action-row { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 12px; /* STRICT: Gap between columns */
-    width: 100%;
-}
+.btn-whatsapp { background: #1C1C1E; color: white; width: 100%; }
+.btn-pdf { background: white; color: var(--text); border: 1px solid #ddd; width: 100%; }
 
 .btn-full { width: 100%; }
 
