@@ -306,4 +306,24 @@ async function generatePDF() {
     document.title = originalTitle;
 }
 
-function resetForm() { if (confirm('Reset tool?')) location.reload(); }
+function resetForm() {
+    if (!confirm('Reset tool? All data will be cleared.')) return;
+
+    // 1. Clear text inputs and textareas (except password)
+    document.querySelectorAll("input, textarea").forEach(el => {
+        if (el.id !== "passwordInput" && el.type !== "button" && el.type !== "submit") {
+            el.value = "";
+        }
+    });
+
+    // 2. Reset product state to 1 empty product
+    products = [{ 
+        id: Date.now(), desc: '', details: '', qty: '', price: '',
+        addPkg: false, addLogo: false, addCard: false 
+    }];
+
+    // 3. Refresh UI
+    updateDates(); // Generate new Quote ID & Current Dates
+    renderProductBlocks();
+    updatePreview();
+}
