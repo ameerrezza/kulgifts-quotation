@@ -33,6 +33,18 @@
             </header>
 
             <form id="quote-form">
+                <!-- Section: Document Type -->
+                <div class="form-section">
+                    <h4 class="section-title">Document Type</h4>
+                    <div class="input-group">
+                        <select id="documentType" onchange="handleDocTypeChange()" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #E5E5EA; font-size: 14px; font-family: inherit; color: #191919; background: white; margin-bottom: 8px;">
+                            <option value="quotation">Quotation</option>
+                            <option value="invoice">Invoice</option>
+                            <option value="receipt">Receipt</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Section: From -->
                 <div class="form-section">
                     <h4 class="section-title">Sender Details (FROM)</h4>
@@ -70,6 +82,26 @@
                         <input type="text" id="clientLocation" placeholder="e.g. Kuala Lumpur, Malaysia"
                             oninput="updatePreview()">
                     </div>
+
+                    <!-- Conditional Fields for Invoice -->
+                    <div id="invoice-fields" style="display: none; margin-top: 12px;">
+                        <div class="input-group">
+                            <label>Reference Quote No.</label>
+                            <input type="text" id="refQuote" placeholder="e.g. KG-Q-1234" oninput="updatePreview()">
+                        </div>
+                    </div>
+
+                    <!-- Conditional Fields for Receipt -->
+                    <div class="grid-2" id="receipt-fields" style="display: none; margin-top: 12px;">
+                        <div class="input-group">
+                            <label>Reference Invoice No.</label>
+                            <input type="text" id="refInvoice" placeholder="e.g. KG-I-1234" oninput="updatePreview()">
+                        </div>
+                        <div class="input-group">
+                            <label>Payment Method</label>
+                            <input type="text" id="paymentMethod" placeholder="e.g. Online Transfer" oninput="updatePreview()">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section: Products -->
@@ -106,10 +138,13 @@
                             <img src="iconlogo.png" alt="KUL Gifts">
                         </div>
                         <div class="doc-meta">
-                            <h2>QUOTATION</h2>
-                            <div class="meta-row"><span>Quote ID:</span> <strong id="p-quote-id">KG-0001</strong></div>
-                            <div class="meta-row"><span>Date Issued:</span> <span id="p-date-issued">-</span></div>
-                            <div class="meta-row"><span>Valid Until:</span> <span id="p-valid-until">-</span></div>
+                            <h2 id="p-doc-type-title">QUOTATION</h2>
+                            <div class="meta-row"><span id="l-doc-id">Quote ID:</span> <strong id="p-quote-id">KG-Q-0001</strong></div>
+                            <div class="meta-row"><span id="l-date-issued">Date Issued:</span> <span id="p-date-issued">-</span></div>
+                            <div class="meta-row" id="row-valid-until"><span id="l-valid-until">Valid Until:</span> <span id="p-valid-until">-</span></div>
+                            <div class="meta-row" id="row-ref-quote" style="display: none;"><span>Ref Quote:</span> <strong id="p-ref-quote">-</strong></div>
+                            <div class="meta-row" id="row-ref-invoice" style="display: none;"><span>Ref Invoice:</span> <strong id="p-ref-invoice">-</strong></div>
+                            <div class="meta-row" id="row-payment-method" style="display: none;"><span>Payment Method:</span> <strong id="p-payment-method">-</strong></div>
                         </div>
                     </header>
 
@@ -177,7 +212,7 @@
                         </div>
                         <div class="notes-box">
                             <label>NOTES:</label>
-                            <ul>
+                            <ul id="notes-list">
                                 <li>Quotation is valid for 7 days</li>
                                 <li>Production starts after confirmation</li>
                                 <li>Delivery timeline shared upon order</li>
