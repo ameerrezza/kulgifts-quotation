@@ -1,6 +1,6 @@
 // AUTH
 function checkPassword() {
-    const p = "7777777";
+    const p = "1234";
     if (document.getElementById("passwordInput").value === p) {
         document.getElementById("authScreen").style.display = "none";
     } else { alert("Wrong password"); }
@@ -349,7 +349,16 @@ function sendWhatsApp() {
         cleanPhone = '60' + cleanPhone;
     }
 
-    const message = `Hello ${clientName},\nHere is your quotation from KUL Gifts.\n\nQuote ID: ${quoteId}\nTotal Amount: ${totalAmount}\n\nLet me know if you’d like to proceed.`;
+    const docTypeRaw = document.getElementById('documentType') ? document.getElementById('documentType').value : 'quotation';
+    let message = '';
+
+    if (docTypeRaw === 'invoice') {
+        message = `Hello ${clientName}, here is your invoice from KUL Gifts.\nInvoice No: ${quoteId}\nTotal Amount: ${totalAmount}\nKindly proceed with payment.`;
+    } else if (docTypeRaw === 'receipt') {
+        message = `Hello ${clientName}, here is your receipt from KUL Gifts.\nReceipt No: ${quoteId}\nTotal Paid: ${totalAmount}\nThank you for your payment.`;
+    } else {
+        message = `Hello ${clientName}, here is your quotation from KUL Gifts.\nQuote ID: ${quoteId}\nTotal Amount: ${totalAmount}\nLet me know if you’d like to proceed.`;
+    }
 
     const whatsappURL = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, "_blank");
@@ -364,12 +373,19 @@ async function generatePDF() {
 
     // 3. Prepare Dynamic Filename
     const originalTitle = document.title;
-    const company = document.getElementById('companyName').value;
-    const client = document.getElementById('clientName').value;
-    const filenameSource = (company || client || 'Client').trim();
+    const company = (document.getElementById('companyName').value || '').trim();
+    const client = (document.getElementById('clientName').value || '').trim();
+    const namePart = company || client;
+
+    const docTypeRaw = document.getElementById('documentType') ? document.getElementById('documentType').value : 'quotation';
+    const docTypeStr = docTypeRaw.charAt(0).toUpperCase() + docTypeRaw.slice(1);
 
     // Set dynamic title (Browser uses this as default PDF filename)
-    document.title = `KUL Gifts Quotation - ${filenameSource}`;
+    if (namePart) {
+        document.title = `KUL Gifts ${docTypeStr} - ${namePart}`;
+    } else {
+        document.title = `KUL Gifts ${docTypeStr}`;
+    }
 
     // 4. Wait for fonts (Inter) to be ready to prevent fallback rendering
     try {
