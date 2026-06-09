@@ -28,6 +28,34 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
 });
 
+// DOC TYPE HANDLING
+function handleDocTypeChange() {
+    const type = document.getElementById('documentType').value;
+    
+    // Toggle input fields
+    document.getElementById('invoice-fields').style.display = type === 'invoice' ? 'block' : 'none';
+    document.getElementById('receipt-fields').style.display = type === 'receipt' ? 'grid' : 'none';
+    
+    // Toggle preview rows
+    document.getElementById('row-ref-quote').style.display = type === 'invoice' ? 'flex' : 'none';
+    document.getElementById('row-ref-invoice').style.display = type === 'receipt' ? 'flex' : 'none';
+    document.getElementById('row-payment-method').style.display = type === 'receipt' ? 'flex' : 'none';
+    document.getElementById('row-valid-until').style.display = type === 'receipt' ? 'none' : 'flex';
+    
+    updateDocIdPrefix();
+    updatePreview();
+}
+
+function updateDocIdPrefix() {
+    const el = document.getElementById('p-quote-id');
+    const currentId = el.textContent;
+    const match = currentId.match(/\d{4}$/);
+    const baseId = match ? match[0] : Math.floor(1000 + Math.random() * 9000);
+    const type = document.getElementById('documentType') ? document.getElementById('documentType').value : 'quotation';
+    const prefix = type === 'invoice' ? 'KG-I-' : (type === 'receipt' ? 'KG-R-' : 'KG-Q-');
+    el.textContent = prefix + baseId;
+}
+
 // MULTI-PRODUCT MANAGEMENT
 function addProductBlock() {
     products.push({ id: Date.now(), desc: '', details: '', qty: '', price: '', addPkg: false, addLogo: false, addCard: false });
@@ -112,6 +140,55 @@ function updatePreview() {
     document.getElementById('p-email').textContent = document.getElementById('email').value || 'Email Address';
     document.getElementById('p-client-location').textContent = document.getElementById('clientLocation').value || 'Client Location';
 
+    if(document.getElementById('refQuote')) document.getElementById('p-ref-quote').textContent = document.getElementById('refQuote').value || '-';
+    if(document.getElementById('refInvoice')) document.getElementById('p-ref-invoice').textContent = document.getElementById('refInvoice').value || '-';
+    if(document.getElementById('paymentMethod')) document.getElementById('p-payment-method').textContent = document.getElementById('paymentMethod').value || '-';
+
+    const type = document.getElementById('documentType') ? document.getElementById('documentType').value : 'quotation';
+    const titleEl = document.getElementById('p-doc-type-title');
+    const lDocId = document.getElementById('l-doc-id');
+    const lDateIssued = document.getElementById('l-date-issued');
+    const lValidUntil = document.getElementById('l-valid-until');
+    const notesList = document.getElementById('notes-list');
+
+    if (titleEl && notesList) {
+        if (type === 'quotation') {
+            titleEl.textContent = 'QUOTATION';
+            lDocId.textContent = 'Quote ID:';
+            lDateIssued.textContent = 'Date Issued:';
+            lValidUntil.textContent = 'Valid Until:';
+            notesList.innerHTML = `
+                <li>Quotation is valid for 7 days</li>
+                <li>Production starts after confirmation</li>
+                <li>Delivery timeline shared upon order</li>
+                <li>Lalamove can be arranged by request</li>
+                <li id="note-deposit" style="display: none;">60% deposit required to confirm order, remaining 40% upon completion</li>
+            `;
+        } else if (type === 'invoice') {
+            titleEl.textContent = 'INVOICE';
+            lDocId.textContent = 'Invoice No:';
+            lDateIssued.textContent = 'Invoice Date:';
+            lValidUntil.textContent = 'Payment Due:';
+            notesList.innerHTML = `
+                <li>Payment terms: Due upon receipt</li>
+                <li>Please include Invoice No. as payment reference</li>
+                <li>Delivery timeline shared upon order</li>
+                <li>Lalamove can be arranged by request</li>
+                <li id="note-deposit" style="display: none;">60% deposit required to confirm order, remaining 40% upon completion</li>
+            `;
+        } else if (type === 'receipt') {
+            titleEl.textContent = 'RECEIPT';
+            lDocId.textContent = 'Receipt No:';
+            lDateIssued.textContent = 'Payment Date:';
+            notesList.innerHTML = `
+                <li>Payment received with thanks</li>
+                <li>This is a computer-generated receipt. No signature required.</li>
+                <li>Delivery timeline shared upon order</li>
+                <li id="note-deposit" style="display: none;">60% deposit required to confirm order, remaining 40% upon completion</li>
+            `;
+        }
+    }
+
     const pContainer = document.getElementById('p-items-container');
     let subtotal = 0;
     let totalQty = 0;
@@ -185,7 +262,9 @@ function formatRM(val) { return 'RM ' + parseFloat(val).toLocaleString('en-MY', 
 function updateDates() {
     const now = new Date(), v = new Date(); v.setDate(now.getDate() + 7);
     const opt = { day: '2-digit', month: 'short', year: 'numeric' };
-    const id = 'KG-' + Math.floor(1000 + Math.random() * 9000);
+    const type = document.getElementById('documentType') ? document.getElementById('documentType').value : 'quotation';
+    const prefix = type === 'invoice' ? 'KG-I-' : (type === 'receipt' ? 'KG-R-' : 'KG-Q-');
+    const id = prefix + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('p-date-issued').textContent = now.toLocaleDateString('en-GB', opt);
     document.getElementById('p-valid-until').textContent = v.toLocaleDateString('en-GB', opt);
     document.getElementById('p-quote-id').textContent = id;
